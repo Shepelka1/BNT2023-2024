@@ -14,6 +14,7 @@
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Title)
+                <a asp-action="Index_Title"> * </a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Location)
@@ -23,6 +24,7 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Size)
+                <a asp-action="Index_Size"> * </a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
@@ -32,6 +34,7 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Year)
+                <a asp-action="Index_Year"> * </a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Copyright)
@@ -40,6 +43,7 @@
         </tr>
     </thead>
     <tbody>
+
 @foreach (var item in Model) {
         <tr>
             <td>

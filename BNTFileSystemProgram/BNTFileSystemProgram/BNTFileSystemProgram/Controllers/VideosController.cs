@@ -33,7 +33,21 @@ namespace BNTFileSystemProgram.Controllers
             return View(await videoManager.ReadAllAsync(true));
         }
 
-        // GET: Videos/Details/5
+        public async Task<IActionResult> Index_Title()
+        {
+            return View(await videoManager.ReadAllAsync(true));
+        }
+
+        public async Task<IActionResult> Index_Year()
+        {
+            return View(await videoManager.ReadAllAsync(true));
+        }
+
+        public async Task<IActionResult> Index_Size()
+        {
+            return View(await videoManager.ReadAllAsync(true));
+        }
+
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
