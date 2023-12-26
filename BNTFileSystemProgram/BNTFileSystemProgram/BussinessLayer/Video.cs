@@ -19,11 +19,11 @@ namespace BussinessLayer
         public Format Format { get; set; }
 
         public List<Genre> Genres { get; set; }
-        public double Size { get; set; }
+        public double? Size { get; set; }
         public string Description { get; set; }
         public List<Tag> Tags { get; set; }
         public string Comment { get; set; }
-        public int Year { get; set; }
+        public int? Year { get; set; }
         public List<Author> Authors { get; set; }
         public string Copyright { get; set; }
         public Video()

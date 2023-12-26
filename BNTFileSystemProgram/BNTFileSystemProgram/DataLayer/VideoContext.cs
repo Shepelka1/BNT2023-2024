@@ -1,5 +1,6 @@
 ﻿using BussinessLayer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
@@ -23,12 +24,9 @@ namespace DataLayer
         {
             try
             {
-                Format formatFromDb = await dbContext.Formats.FindAsync(item.FormatId);
+                dbContext.ChangeTracker.Clear();
 
-                if (formatFromDb != null)
-                {
-                    item.Format = formatFromDb;
-                }
+                dbContext.Attach(item.Format);
 
                 foreach (var author in item.Authors)
                 {

@@ -1,0 +1,148 @@
+﻿@page "/videos"
+@using BlazorView.Services;
+@using BussinessLayer;
+@using ServiceLayer;
+@inject VideoManager videoManager;
+@inject NavigationManager navigationManager;
+@inject StateContainer<Video> videoContainer;
+
+<h1>Videos</h1>
+
+<p>
+    <a href="videos/create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Title
+                <span @onclick="(() => Filter(1))">*</span>
+            </th>
+            <th>
+                Location
+            </th>
+            <th>
+                Format
+            </th>
+            <th>
+                Size
+                <span @onclick="(() => Filter(2))">*</span>
+            </th>
+            <th>
+                Year
+                <span @onclick="(() => Filter(3))">*</span>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model == null)
+        {
+            <tr><td>Loading...</td></tr>
+        }
+        else
+        {
+            @foreach (Video item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Title
+                    </td>
+                    <td>
+                        @item.Location
+                    </td>
+                    <td>
+                        @item.Format.Extension
+                    </td>
+                    <td>
+                        @item.Size
+                    </td>
+                    <td>
+                        @item.Year
+                    </td>
+                    <td>
+                        <a href="videos/edit" @onclick="(() => SetBook(item))">Edit</a> |
+                        <a href="videos/details" @onclick="(() => SetBook(item))">Details</a> |
+                        <a href="authors" @onclick="( () => OnDelete(item.VideoId) )">Delete</a>
+                    </td>
+                </tr>
+            }
+        } 
+    </tbody>
+</table>
+
+@code {
+    ICollection<Video> Model;
+    bool ModelOrder = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBooks();
+    }
+
+    async Task LoadBooks()
+    {
+        Model = await videoManager.ReadAllAsync(true, false);
+    }
+
+    void SetBook(Video video)
+    {
+        videoContainer.SetValue(video);
+    }
+
+    async Task OnDelete(string id)
+    {
+        try
+        {
+            await videoManager.DeleteAsync(id);
+            await LoadBooks();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    void Filter(int Case)
+    {
+        switch(Case){
+            case 1:
+                if (ModelOrder)
+                {
+                    Model = Model.OrderBy(v => v.Title).ToList();
+                    ModelOrder = false;
+                }
+                else
+                {
+                    Model = Model.OrderByDescending(v => v.Title).ToList();
+                    ModelOrder = true;
+                }
+                break;
+            case 2:
+                if (ModelOrder)
+                {
+                    Model = Model.OrderBy(v => v.Size).ToList();
+                    ModelOrder = false;
+                }
+                else
+                {
+                    Model = Model.OrderByDescending(v => v.Size).ToList();
+                    ModelOrder = true;
+                }
+                break;
+            case 3:
+                if (ModelOrder)
+                {
+                    Model = Model.OrderBy(v => v.Year).ToList();
+                    ModelOrder = false;
+                }
+                else
+                {
+                    Model = Model.OrderByDescending(v => v.Year).ToList();
+                    ModelOrder = true;
+                }
+                break;
+        }
+
+    }
+}

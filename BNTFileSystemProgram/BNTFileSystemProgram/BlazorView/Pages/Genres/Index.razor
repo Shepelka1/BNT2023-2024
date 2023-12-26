@@ -1,0 +1,73 @@
+﻿@page "/genres"
+@using BussinessLayer;
+@using ServiceLayer;
+@inject GenreManager genreManager;
+@inject NavigationManager navigationManager;
+
+<h1>Index</h1>
+
+<p>
+    <a href="genres/create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model == null)
+        {
+            <tr><td>Loading...</td></tr>
+        }
+        else
+        {
+            @foreach (Genre genre in Model)
+            {
+                <tr>
+                    <td>
+                        @genre.Content
+                    </td>
+                    <td>
+                        <a href="genres/edit/@genre.GenreId">Edit</a> |
+                        <a href="genres/details/@genre.GenreId">Details</a> |
+                        <a href="genres/delete/@genre.GenreId">Delete</a> |
+                        <a href="genres" @onclick="(() => OnFastDelete(genre.GenreId))">Fast Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    ICollection<Genre> Model /* = new List<Genre>() */ ;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await genreManager.ReadAllAsync();
+        await base.OnInitializedAsync();
+    }
+
+    async Task OnFastDelete(string id)
+    {
+        try
+        {
+            await genreManager.DeleteAsync(id);
+
+            // I начин:
+            Model = await genreManager.ReadAllAsync();
+
+            // II начин:
+            //navigationManager.NavigateTo("genres", true);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+}
