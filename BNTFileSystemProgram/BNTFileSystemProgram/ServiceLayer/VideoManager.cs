@@ -23,14 +23,14 @@ namespace ServiceLayer
             await videoContext.CreateAsync(item);
         }
 
-        public async Task<Video> ReadAsync(string key, bool useNavigationalProperties = false, bool isReadOnly = true)
+        public async Task<Video> ReadAsync(string key, bool useNavigationalProperties = false, bool isReadOnly = true, bool forIndex = false)
         {
-            return await videoContext.ReadAsync(key, useNavigationalProperties, isReadOnly);
+            return await videoContext.ReadAsync(key, useNavigationalProperties, isReadOnly, forIndex);
         }
 
-        public async Task<List<Video>> ReadAllAsync(bool useNavigationalProperties = false, bool isReadOnly = true)
+        public async Task<List<Video>> ReadAllAsync(bool useNavigationalProperties = false, bool isReadOnly = true, bool forIndex = false)
         {
-            return await videoContext.ReadAllAsync(useNavigationalProperties, isReadOnly);
+            return await videoContext.ReadAllAsync(useNavigationalProperties, isReadOnly, forIndex);
         }
 
         public async Task UpdateAsync(Video item, bool useNavigationalProperties = false)

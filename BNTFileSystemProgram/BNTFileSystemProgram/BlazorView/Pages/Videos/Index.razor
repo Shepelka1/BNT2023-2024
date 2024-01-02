@@ -52,7 +52,15 @@
                         @item.Location
                     </td>
                     <td>
-                        @item.Format.Extension
+                        @if (item.Format != null)
+                        {
+                            @item.Format.Extension
+                        }
+                        else
+                        {
+                            <a>Not Set</a>
+                        }
+
                     </td>
                     <td>
                         @item.Size
@@ -63,7 +71,7 @@
                     <td>
                         <a href="videos/edit" @onclick="(() => SetBook(item))">Edit</a> |
                         <a href="videos/details" @onclick="(() => SetBook(item))">Details</a> |
-                        <a href="authors" @onclick="( () => OnDelete(item.VideoId) )">Delete</a>
+                        <a href="videos/delete" @onclick="(() => SetBook(item))">Delete</a>
                     </td>
                 </tr>
             }
@@ -82,7 +90,7 @@
 
     async Task LoadBooks()
     {
-        Model = await videoManager.ReadAllAsync(true, false);
+        Model = await videoManager.ReadAllAsync(true, false, true);
     }
 
     void SetBook(Video video)

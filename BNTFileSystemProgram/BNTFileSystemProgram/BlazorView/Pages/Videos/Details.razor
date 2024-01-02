@@ -27,7 +27,14 @@
             Format
         </dt>
         <dd class="col-sm-10">
-            @Model.Format.Extension
+            @if (Model.Format != null)
+            {
+                @Model.Format.Extension
+            }
+            else
+            {
+                <a>Not Set</a>
+            }
         </dd>
         <dt class="col-sm-2">
             Authors

@@ -1,0 +1,42 @@
+﻿@page "/videos/delete"
+@using BlazorView.Services;
+@using MudBlazor;
+@using MudBlazor.Services;
+@using BussinessLayer;
+@using ServiceLayer;
+@inject VideoManager videoManager;
+@inject StateContainer<Video> videoContainer;
+@inject NavigationManager navigationManager;
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Video</h4>
+    <hr />
+    <MudForm Model="Model">
+        <MudTextField @bind-Value="Model.Title"
+                      T="string" class="form-control"
+                      Label="Title"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      ReadOnly="true" />
+        <MudButton class="btn btn-primary" OnClick="(() => OnDeleted())">Delete</MudButton> |
+        <a href="videos">Back to List</a>
+    </MudForm>
+</div>
+
+@code { 
+    Video Model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = videoContainer.Value;
+    }
+
+    private async Task OnDeleted()
+    {
+        await videoManager.DeleteAsync(Model.VideoId);
+        navigationManager.NavigateTo("videos", true);
+    }
+}

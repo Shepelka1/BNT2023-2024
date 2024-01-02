@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BussinessLayer
 {
@@ -9,22 +10,42 @@ namespace BussinessLayer
     {
         [Key]
         public string VideoId { get; set; }
+
         [Required]
         public string Title { get; set; }
+
         [Required]
         public string Location { get; set; }
 
         [ForeignKey("FormatId")]
+        [AllowNull]
         public string FormatId { get; set; }
+
+        [AllowNull]
         public Format Format { get; set; }
 
+        [AllowNull]
         public List<Genre> Genres { get; set; }
+
+        [AllowNull]
         public double? Size { get; set; }
+
+        [AllowNull]
         public string Description { get; set; }
+
+        [AllowNull]
         public List<Tag> Tags { get; set; }
+
+        [AllowNull]
         public string Comment { get; set; }
+
+        [AllowNull]
         public int? Year { get; set; }
+
+        [AllowNull]
         public List<Author> Authors { get; set; }
+
+        [AllowNull]
         public string Copyright { get; set; }
         public Video()
         {

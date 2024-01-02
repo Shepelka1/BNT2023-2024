@@ -10,6 +10,7 @@ namespace BlazorView
 {
     public class Startup
     {
+        //DbContextOptionsBuilder.EnableSensitiveDataLogging
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;

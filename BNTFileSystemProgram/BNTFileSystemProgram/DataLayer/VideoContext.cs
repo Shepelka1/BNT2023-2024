@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DataLayer
 {
-    public class VideoContext : IDb<Video, string>
+    public class VideoContext
     {
         private readonly ApplicationDbContext dbContext;
 
@@ -24,25 +24,6 @@ namespace DataLayer
         {
             try
             {
-                dbContext.ChangeTracker.Clear();
-
-                dbContext.Attach(item.Format);
-
-                foreach (var author in item.Authors)
-                {
-                    dbContext.Attach(author);
-                }
-
-                foreach (var genre in item.Genres)
-                {
-                    dbContext.Attach(genre);
-                }
-
-                foreach (var tag in item.Tags)
-                {
-                    dbContext.Attach(tag);
-                }
-
                 dbContext.Videos.Add(item);
                 await dbContext.SaveChangesAsync();
             }
@@ -53,7 +34,7 @@ namespace DataLayer
             }
         }
 
-        public async Task<Video> ReadAsync(string key, bool useNavigationalProperties = false, bool isReadOnly = true)
+        public async Task<Video> ReadAsync(string key, bool useNavigationalProperties = false, bool isReadOnly = true, bool forIndex = false)
         {
             try
             {
@@ -61,10 +42,11 @@ namespace DataLayer
 
                 if (useNavigationalProperties)
                 {
-                    query = query.Include(v => v.Genres)
-                        .Include(v => v.Authors)
-                        .Include(v => v.Tags)
-                        .Include(v => v.Format);
+                    query = query.Include(v => v.Format);
+                    if (!forIndex)
+                        query = query.Include(v => v.Genres)
+                            .Include(v => v.Authors)
+                            .Include(v => v.Tags);
                 }
 
                 if (isReadOnly)
@@ -81,7 +63,7 @@ namespace DataLayer
             }
         }
 
-        public async Task<List<Video>> ReadAllAsync(bool useNavigationalProperties = false, bool isReadOnly = true)
+        public async Task<List<Video>> ReadAllAsync(bool useNavigationalProperties = false, bool isReadOnly = true, bool forIndex = false)
         {
             try
             {
@@ -89,10 +71,11 @@ namespace DataLayer
 
                 if (useNavigationalProperties)
                 {
-                    query = query.Include(v => v.Genres)
-                        .Include(v => v.Authors)
-                        .Include(v => v.Tags)
-                        .Include(v => v.Format);
+                    query = query.Include(v => v.Format);
+                    if (!forIndex)
+                        query = query.Include(v => v.Genres)
+                            .Include(v => v.Authors)
+                            .Include(v => v.Tags);
                 }
 
                 if (isReadOnly)
@@ -113,86 +96,6 @@ namespace DataLayer
         {
             try
             {
-                Video videoFromDb = await ReadAsync(item.VideoId, useNavigationalProperties, false);
-
-                if (videoFromDb == null) { return; }
-                //Come up with logic please!
-
-                videoFromDb.Copyright = item.Copyright;
-                videoFromDb.Year = item.Year;
-                videoFromDb.Title = item.Title;
-                videoFromDb.Description = item.Description;
-                videoFromDb.Location = item.Location;
-                videoFromDb.Comment = item.Comment;
-                videoFromDb.Size = item.Size;
-
-                //try create logic!
-                if (useNavigationalProperties)
-                {
-                    Format formatFromDb = await dbContext.Formats.FindAsync(item.Format.FormatId);
-
-                    if (formatFromDb != null)
-                    {
-                        item.Format = formatFromDb;
-                    }
-                    else
-                    {
-                        item.Format = item.Format;
-                    }
-
-                    List<Author> authors = new (item.Authors.Count);
-
-                    foreach (var author in item.Authors)
-                    {
-                        Author authorFromDb = await dbContext.Authors.FindAsync(author.AuthorId);
-
-                        if (authorFromDb is null)
-                        {
-                            authors.Add(author);
-                        }
-                        else
-                        {
-                            authors.Add(authorFromDb);
-                        }
-                    }
-
-                    List<Genre> genres = new (item.Genres.Count);
-
-                    foreach (var genre in item.Genres)
-                    {
-                        Genre genreFromDb = await dbContext.Genres.FindAsync(genre.GenreId);
-
-                        if (genreFromDb is null)
-                        {
-                            genres.Add(genre);
-                        }
-                        else
-                        {
-                            genres.Add(genreFromDb);
-                        }
-                    }
-
-                    List<Tag> tags = new (item.Tags.Count);
-
-                    foreach (var tag in item.Tags)
-                    {
-                        Tag tagFromDb = await dbContext.Tags.FindAsync(tag.TagId);
-
-                        if (tagFromDb is null)
-                        {
-                            tags.Add(tag);
-                        }
-                        else
-                        {
-                            tags.Add(tagFromDb);
-                        }
-                    }
-
-                    videoFromDb.Authors = authors;
-                    videoFromDb.Genres = genres;
-                    videoFromDb.Tags = tags;
-                }
-
                 await dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -208,7 +111,7 @@ namespace DataLayer
             {
                 var videoFromDb = await ReadAsync(key, false, false);
 
-                if(videoFromDb == null)
+                if (videoFromDb == null)
                 {
                     throw new ArgumentException("The video with this Id does not exist");
                 }
