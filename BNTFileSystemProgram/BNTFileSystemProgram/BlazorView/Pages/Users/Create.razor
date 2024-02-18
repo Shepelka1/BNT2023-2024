@@ -1,0 +1,84 @@
+﻿@page "/user/create"
+@using BusinessLayer;
+@using ServiceLayer;
+@using Services;
+@using Microsoft.Extensions.Logging;
+@inject ErrorModel errorModel;
+@inject IdentityManager userManager;
+@inject NavigationManager navigationManager;
+
+<h3>Create User</h3>
+
+<EditForm Model="@model" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="container">
+        <div class="form-row">
+            <div class="col-md-4">
+                <label for="name">Username</label>
+                <InputText id="name" class="form-control" @bind-Value="model.UserName" />
+            </div>
+            <div class="col-md-4">
+                <label for="password">Password</label>
+                <InputText class="form-control" id="password" type="password" @bind-Value="model.PasswordHash" />
+            </div>
+            <div class="col-md-4">
+                <label for="email">Email</label>
+                <InputText id="email" class="form-control" @bind-Value="model.Email"></InputText>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4">
+                <label for="name">First Name</label>
+                <InputText id="name" class="form-control" @bind-Value="model.FirstName"></InputText>
+            </div>
+            <div class="col-md-4">
+                <label for="name">Last Name</label>
+                <InputText id="name" class="form-control" @bind-Value="model.LastName"></InputText>
+            </div>
+            <div class="col-md-4">
+                <label for="age">Age</label>
+                <InputText id="age" class="form-control" TValue="string" @bind-Value="model.PhoneNumber"></InputText>
+            </div>
+            <div class="col-md-4">
+                <label for="role">Role</label>
+                <InputSelect id="role" class="form-control" @bind-Value="model.Role">
+                    @foreach (Role item in roles)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </InputSelect>
+            </div>
+        </div>
+        <div class="row">
+            <div class="md-1">
+                <button type="submit" class="btn border-dark mt-2 ml-3">Create</button>
+            </div>
+        </div>
+        <div class="row">
+            <label id="error" class="col-md-4 text-danger">@errorModel.Description</label>
+        </div>
+    </div>
+</EditForm>
+
+@code
+{
+    User model = new();
+    List<Role> roles = new();
+
+    protected override Task OnInitializedAsync()
+    {
+        roles.Add(Role.Admin);
+        roles.Add(Role.User);
+        roles.Add(Role.Editor);
+        return base.OnInitializedAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+            await userManager.CreateUserAsync(model.UserName, model.PasswordHash, model.FirstName, model.LastName, model.Role);
+
+            navigationManager.NavigateTo("/", false);
+    }
+
+}

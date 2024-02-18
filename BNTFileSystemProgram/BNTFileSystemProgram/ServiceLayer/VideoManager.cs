@@ -1,5 +1,6 @@
 ﻿using BussinessLayer;
 using DataLayer;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,11 @@ namespace ServiceLayer
         public async Task DeleteAsync(string key)
         {
             await videoContext.DeleteAsync(key);
+        }
+
+        public void LoadNavigation(Video item)
+        {
+            videoContext.LoadNavigation(item);
         }
     }
 }

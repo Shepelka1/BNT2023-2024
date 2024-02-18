@@ -39,18 +39,6 @@ namespace BNTFileSystemProgram.Controllers
         {
             var users = await _identityContext.GetAllUsersAsync();
 
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                users = filter switch
-                {
-                    0 => users.Where(p => p.UserName.Contains(searchString)),
-                    1 => users.Where(p => p.FirstName.Contains(searchString)),
-                    2 => users.Where(p => p.LastName.Contains(searchString)),
-                    3 => users.Where(p => p.Role.ToString().Contains(searchString)),
-                    _ => users
-                };
-            }
-
             return View(users);
         }
 

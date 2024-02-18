@@ -12,9 +12,9 @@ namespace ServiceLayer
     {
         private readonly GenreContext genreContext;
 
-        public GenreManager(GenreContext formatContext)
+        public GenreManager(GenreContext genreContext)
         {
-            this.genreContext = formatContext;
+            this.genreContext = genreContext;
         }
 
         public async Task CreateAsync(Genre item)

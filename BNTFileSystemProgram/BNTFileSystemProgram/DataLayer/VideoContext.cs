@@ -125,5 +125,11 @@ namespace DataLayer
                 throw new Exception(ex.Message);
             }
         }
+        public void LoadNavigation(Video item)
+        {
+            dbContext.Entry(item).Collection(v => v.Genres).Load();
+            dbContext.Entry(item).Collection(v => v.Authors).Load();
+            dbContext.Entry(item).Collection(v => v.Tags).Load();
+        }
     }
 }

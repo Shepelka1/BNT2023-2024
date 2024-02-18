@@ -1,16 +1,142 @@
 ﻿@page "/videos"
 @using BlazorView.Services;
+@using BusinessLayer;
 @using BussinessLayer;
 @using ServiceLayer;
 @inject VideoManager videoManager;
 @inject NavigationManager navigationManager;
 @inject StateContainer<Video> videoContainer;
+@inject AuthorManager authorManager;
+@inject GenreManager genreManager;
+@inject FormatManager formatManager;
+@inject TagManager tagManager;
+@inject IJSRuntime JS;
 
 <h1>Videos</h1>
 
 <p>
     <a href="videos/create">Create New</a>
 </p>
+<div class="form-group">
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Save"
+               IconColor="Color.Primary"
+               Size="Size.Large"
+               OnClick="OnSearchActivation">Search!</MudButton>
+</div>
+<div id="search-div" style="display:none">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudForm Model="SearchModel">
+                <MudPaper>
+                    <div class="col-md-5 col-sm-12">
+                        <MudTextField T="string" Label="Search" @bind-Value="SearchModel.SearchedString"
+                                         ResetValueOnEmptyText="true"
+                                         CoerceText="true" CoerceValue="false"
+                                         Variant="Variant.Outlined"
+                                         Immediate="true" />
+                    </div>
+                    <div>
+                        <MudSelect T="SearchItem.SearchTextOption" Label="In" @bind-Value="SearchModel.SelectedTextOption" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="@(SearchItem.SearchTextOption.Title)" />
+                            <MudSelectItem Value="@(SearchItem.SearchTextOption.Location)" />
+                            <MudSelectItem Value="@(SearchItem.SearchTextOption.Description)" />
+                            <MudSelectItem Value="@(SearchItem.SearchTextOption.Copyright)" />
+                            <MudSelectItem Value="@(SearchItem.SearchTextOption.Comment)" />
+                        </MudSelect>
+                    </div>
+                    <div class="col-md-5 col-sm-12">
+                        <MudTextField T="double?" Label="Search" @bind-Value="SearchModel.SearchedNumber"
+                                      ResetValueOnEmptyText="true"
+                                      CoerceText="true" CoerceValue="false"
+                                      Variant="Variant.Outlined"
+                                      Immediate="true" />
+                    </div>
+                    <div>
+                        <MudSelect T="SearchItem.SearchNumberOption" Label="In" @bind-Value="SearchModel.SearchedNumberOption" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="@(SearchItem.SearchNumberOption.Size)" />
+                            <MudSelectItem Value="@(SearchItem.SearchNumberOption.Year)" />
+                        </MudSelect>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-5 col-sm-12">
+                            <MudAutocomplete T="Format" Label="Formats" @bind-Value="SearchModel.SelectedFormat" SearchFunc="@SearchFormat"
+                                             ResetValueOnEmptyText="true"
+                                             CoerceText="true" CoerceValue="false"
+                                             ToStringFunc="@(f => f==null?null : $"{f.Extension}")"
+                                             Variant="Variant.Outlined"
+                                             Immediate="true" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-5 col-sm-12">
+                            <MudAutocomplete T="Genre" Label="Genres" @bind-Value="SelectedGenre" SearchFunc="@SearchGenres"
+                                             ResetValueOnEmptyText="true"
+                                             CoerceText="true" CoerceValue="false"
+                                             ToStringFunc="@(g => g==null?null : $"{g.Content}")"
+                                             Variant="Variant.Outlined"
+                                             Immediate="true" />
+                        </div>
+                        <div class="col-md-5 col-sm-12">
+                            <MudButton class="btn btn-primary" OnClick="@(() => AddGenre())">Add</MudButton>
+                        </div>
+                        @foreach (var item in SearchModel.SelectedGenres)
+                        {
+                            <a>@item.Content</a>
+                            <a @onclick="@(() => SearchModel.SelectedGenres.Remove(item))"> ✖</a>
+                            <a>| </a>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-5 col-sm-12">
+                            <MudAutocomplete T="Author" Label="Authors" @bind-Value="SelectedAuthor" SearchFunc="@SearchAuthors"
+                                             ResetValueOnEmptyText="true"
+                                             CoerceText="true" CoerceValue="false"
+                                             ToStringFunc="@(a => a==null?null : $"{a.AuthorName}")"
+                                             Variant="Variant.Outlined"
+                                             Immediate="true" />
+                        </div>
+                        <div class="col-md-5 col-sm-12">
+                            <MudButton class="btn btn-primary" OnClick="@(() => AddAuthor())">Add</MudButton>
+                        </div>
+                        @foreach (var item in SearchModel.SelectedAuthors)
+                        {
+                            <a>@item.AuthorName</a>
+                            <a @onclick="@(() => SearchModel.SelectedAuthors.Remove(item))"> ✖</a>
+                            <a>| </a>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-5 col-sm-12">
+                            <MudAutocomplete T="Tag" Label="Tags" @bind-Value="SelectedTag" SearchFunc="@SearchTags"
+                                             ResetValueOnEmptyText="true"
+                                             CoerceText="true" CoerceValue="false"
+                                             ToStringFunc="@(t => t==null?null : $"{t.Content}")"
+                                             Variant="Variant.Outlined"
+                                             Immediate="true" />
+                        </div>
+                        <div class="col-md-5 col-sm-12">
+                            <MudButton class="btn btn-primary" OnClick="@(() => AddTag())">Add</MudButton>
+                        </div>
+                        @foreach (var item in SearchModel.SelectedTags)
+                        {
+                            <a>@item.Content</a>
+                            <a @onclick="@(() => SearchModel.SelectedTags.Remove(item))"> ✖</a>
+                            <a>| </a>
+                        }
+                    </div>
+                </MudPaper>
+                <div class="form-group">
+                    <MudButton Variant="Variant.Filled"
+                               StartIcon="@Icons.Material.Filled.Save"
+                               IconColor="Color.Primary"
+                               Size="Size.Large"
+                               OnClick="SearchVideo">Search</MudButton>
+                </div>
+            </MudForm>
+        </MudItem>
+    </MudGrid>
+</div>
 <table class="table">
     <thead>
         <tr>
@@ -79,16 +205,36 @@
     </tbody>
 </table>
 
+<script>
+    function hideDiv(){
+        var selectDiv = document.getElementById("search-div");
+        selectDiv.style.display = "block";
+    }
+</script>
+
 @code {
     ICollection<Video> Model;
+
+    SearchItem SearchModel;
+
     bool ModelOrder = false;
+
+    Genre SelectedGenre = null;
+    Author SelectedAuthor = null;
+    Tag SelectedTag = null;
+
+    ICollection<Genre> Genres = new List<Genre>();
+    ICollection<Author> Authors = new List<Author>();
+    ICollection<Format> Formats = new List<Format>();
+    ICollection<Tag> Tags = new List<Tag>();
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadBooks();
+        SearchModel = new();
+        await LoadVideos();
     }
 
-    async Task LoadBooks()
+    async Task LoadVideos()
     {
         Model = await videoManager.ReadAllAsync(true, false, true);
     }
@@ -96,6 +242,7 @@
     void SetBook(Video video)
     {
         videoContainer.SetValue(video);
+        videoManager.LoadNavigation(video);
     }
 
     async Task OnDelete(string id)
@@ -103,7 +250,7 @@
         try
         {
             await videoManager.DeleteAsync(id);
-            await LoadBooks();
+            await LoadVideos();
         }
         catch (Exception)
         {
@@ -152,5 +299,73 @@
                 break;
         }
 
+    }
+
+    async Task OnSearchActivation()
+    {
+        Genres = await genreManager.ReadAllAsync(false, false);
+        Authors = await authorManager.ReadAllAsync(false, false);
+        Formats = await formatManager.ReadAllAsync(false, false);
+        Tags = await tagManager.ReadAllAsync(false, false);
+
+        await JS.InvokeVoidAsync("hideDiv");
+    }
+
+    void AddGenre()
+    {
+        if (!SearchModel.SelectedGenres.Contains(SelectedGenre) && SelectedGenre != null)
+            SearchModel.SelectedGenres.Add(SelectedGenre);
+        SelectedGenre = null;
+    }
+
+    void AddAuthor()
+    {
+        if (!SearchModel.SelectedAuthors.Contains(SelectedAuthor) && SelectedAuthor != null)
+            SearchModel.SelectedAuthors.Add(SelectedAuthor);
+        SelectedAuthor = null;
+    }
+
+    void AddTag()
+    {
+        if (!SearchModel.SelectedTags.Contains(SelectedTag) && SelectedTag != null)
+            SearchModel.SelectedTags.Add(SelectedTag);
+        SelectedTag = null;
+    }
+
+    private async Task<IEnumerable<Format>> SearchFormat(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Formats;
+
+        return Formats.Where(c => c.Extension.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<Genre>> SearchGenres(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Genres;
+
+        return Genres.Where(c => c.Content.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<Author>> SearchAuthors(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Authors;
+
+        return Authors.Where(c => c.AuthorName.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<Tag>> SearchTags(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Tags;
+
+        return Tags.Where(c => c.Content.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    async Task SearchVideo()
+    {
+        
     }
 }

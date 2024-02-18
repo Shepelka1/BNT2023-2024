@@ -1,7 +1,9 @@
 ﻿using BlazorView.Pages;
 using BlazorView.Services;
+using BusinessLayer;
 using BussinessLayer;
 using DataLayer;
+using Microsoft.AspNetCore.Identity;
 using MudBlazor;
 using MudBlazor.Services;
 using ServiceLayer;
@@ -45,16 +47,40 @@ namespace BlazorView
             services.AddScoped<FormatManager, FormatManager>();
             services.AddScoped<FormatContext, FormatContext>();
 
+            services.AddScoped<IdentityManager, IdentityManager>();
+            services.AddScoped<IdentityContext, IdentityContext>();
+
             services.AddScoped<ApplicationDbContext, ApplicationDbContext>();
 
-            //services.AddScoped<AuthorManager, AuthorManager>();
-            //services.AddScoped<IDb<Author, string>, AuthorContext>();
-            //services.AddScoped<AuthorContext, AuthorContext>();
+            services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddSignInManager()
+            .AddDefaultTokenProviders();
 
-            //services.AddScoped<StateContainer<Book>, StateContainer<Book>>();
-            //services.AddScoped<StateContainer<Author>, StateContainer<Author>>();
-            //services.AddScoped<StateContainer<Genre>, StateContainer<Genre>>();
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings.
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 4;
+                options.Password.RequiredUniqueChars = 1;
 
+                // Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 3;
+                options.Lockout.AllowedForNewUsers = true;
+
+                // User settings.
+                options.User.AllowedUserNameCharacters =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = false;
+
+                // Log in required.
+                options.SignIn.RequireConfirmedAccount = false; // default
+                options.SignIn.RequireConfirmedEmail = false; // default
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
