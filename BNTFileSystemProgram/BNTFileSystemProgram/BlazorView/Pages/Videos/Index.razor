@@ -1,0 +1,470 @@
+﻿@page "/videos"
+@using BlazorView.Services;
+@using BusinessLayer;
+@using BussinessLayer;
+@using ServiceLayer;
+@inject VideoManager videoManager;
+@inject NavigationManager navigationManager;
+@inject StateContainer<Video> videoContainer;
+@inject AuthorManager authorManager;
+@inject GenreManager genreManager;
+@inject FormatManager formatManager;
+@inject TagManager tagManager;
+@inject IJSRuntime JS;
+
+<h1>Videos</h1>
+
+<p>
+    <a href="videos/create">Create New</a>
+</p>
+<div class="form-group">
+    <MudButton Variant="Variant.Filled"
+               StartIcon="@Icons.Material.Filled.Save"
+               IconColor="Color.Primary"
+               Size="Size.Large"
+               OnClick="OnSearchActivation">Search!</MudButton>
+</div>
+<div id="search-div" style="display:none">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudForm Model="SearchModel">
+                <MudPaper>
+                    <div class="col-md-5 col-sm-12">
+                        <MudTextField T="string" Label="Search" @bind-Value="SearchModel.SearchedString"
+                                         ResetValueOnEmptyText="true"
+                                         CoerceText="true" CoerceValue="false"
+                                         Variant="Variant.Outlined"
+                                         Immediate="true" />
+                    </div>
+                    <div>
+                        <MudSelect T="SearchItem.SearchTextOption" Label="In" @bind-Value="SearchModel.SelectedTextOption" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="@(SearchItem.SearchTextOption.Title)" />
+                            <MudSelectItem Value="@(SearchItem.SearchTextOption.Location)" />
+                            <MudSelectItem Value="@(SearchItem.SearchTextOption.Description)" />
+                            <MudSelectItem Value="@(SearchItem.SearchTextOption.Copyright)" />
+                            <MudSelectItem Value="@(SearchItem.SearchTextOption.Comment)" />
+                        </MudSelect>
+                    </div>
+                    <div class="col-md-5 col-sm-12">
+                        <MudTextField T="double?" Label="Search" @bind-Value="SearchModel.SearchedNumber"
+                                      ResetValueOnEmptyText="true"
+                                      CoerceText="true" CoerceValue="false"
+                                      Variant="Variant.Outlined"
+                                      Immediate="true" />
+                    </div>
+                    <div>
+                        <MudSelect T="SearchItem.SearchNumberOption" Label="In" @bind-Value="SearchModel.SelectedNumberOption" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="@(SearchItem.SearchNumberOption.Size)" />
+                            <MudSelectItem Value="@(SearchItem.SearchNumberOption.Year)" />
+                        </MudSelect>
+                    </div>
+                    <div>
+                        <MudSelect T="SearchItem.SearchNumberComparatorOption" Label="In" @bind-Value="SearchModel.SelectedNumberComparatorOption" AnchorOrigin="Origin.BottomCenter">
+                            <MudSelectItem Value="@(SearchItem.SearchNumberComparatorOption.Equal)" />
+                            <MudSelectItem Value="@(SearchItem.SearchNumberComparatorOption.Greater)" />
+                            <MudSelectItem Value="@(SearchItem.SearchNumberComparatorOption.Less)" />
+                        </MudSelect>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-5 col-sm-12">
+                            <MudAutocomplete T="Format" Label="Formats" @bind-Value="SearchModel.SelectedFormat" SearchFunc="@SearchFormat"
+                                             ResetValueOnEmptyText="true"
+                                             CoerceText="true" CoerceValue="false"
+                                             ToStringFunc="@(f => f==null?null : $"{f.Extension}")"
+                                             Variant="Variant.Outlined"
+                                             Immediate="true" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-5 col-sm-12">
+                            <MudAutocomplete T="Genre" Label="Genres" @bind-Value="SelectedGenre" SearchFunc="@SearchGenres"
+                                             ResetValueOnEmptyText="true"
+                                             CoerceText="true" CoerceValue="false"
+                                             ToStringFunc="@(g => g==null?null : $"{g.Content}")"
+                                             Variant="Variant.Outlined"
+                                             Immediate="true" />
+                        </div>
+                        <div class="col-md-5 col-sm-12">
+                            <MudButton class="btn btn-primary" OnClick="@(() => AddGenre())">Add</MudButton>
+                        </div>
+                        @foreach (var item in SearchModel.SelectedGenres)
+                        {
+                            <a>@item.Content</a>
+                            <a @onclick="@(() => SearchModel.SelectedGenres.Remove(item))"> ✖</a>
+                            <a>| </a>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-5 col-sm-12">
+                            <MudAutocomplete T="Author" Label="Authors" @bind-Value="SelectedAuthor" SearchFunc="@SearchAuthors"
+                                             ResetValueOnEmptyText="true"
+                                             CoerceText="true" CoerceValue="false"
+                                             ToStringFunc="@(a => a==null?null : $"{a.AuthorName}")"
+                                             Variant="Variant.Outlined"
+                                             Immediate="true" />
+                        </div>
+                        <div class="col-md-5 col-sm-12">
+                            <MudButton class="btn btn-primary" OnClick="@(() => AddAuthor())">Add</MudButton>
+                        </div>
+                        @foreach (var item in SearchModel.SelectedAuthors)
+                        {
+                            <a>@item.AuthorName</a>
+                            <a @onclick="@(() => SearchModel.SelectedAuthors.Remove(item))"> ✖</a>
+                            <a>| </a>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-5 col-sm-12">
+                            <MudAutocomplete T="Tag" Label="Tags" @bind-Value="SelectedTag" SearchFunc="@SearchTags"
+                                             ResetValueOnEmptyText="true"
+                                             CoerceText="true" CoerceValue="false"
+                                             ToStringFunc="@(t => t==null?null : $"{t.Content}")"
+                                             Variant="Variant.Outlined"
+                                             Immediate="true" />
+                        </div>
+                        <div class="col-md-5 col-sm-12">
+                            <MudButton class="btn btn-primary" OnClick="@(() => AddTag())">Add</MudButton>
+                        </div>
+                        @foreach (var item in SearchModel.SelectedTags)
+                        {
+                            <a>@item.Content</a>
+                            <a @onclick="@(() => SearchModel.SelectedTags.Remove(item))"> ✖</a>
+                            <a>| </a>
+                        }
+                    </div>
+                </MudPaper>
+                <div class="form-group">
+                    <MudButton Variant="Variant.Filled"
+                               StartIcon="@Icons.Material.Filled.Save"
+                               IconColor="Color.Primary"
+                               Size="Size.Large"
+                               OnClick="SearchVideo">Search</MudButton>
+                </div>
+                <div class="form-group">
+                    <MudButton Variant="Variant.Filled"
+                               StartIcon="@Icons.Material.Filled.Save"
+                               IconColor="Color.Primary"
+                               Size="Size.Large"
+                               OnClick="ClearSearchModel">Clear selection</MudButton>
+                </div>
+            </MudForm>
+        </MudItem>
+    </MudGrid>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Title
+                <span @onclick="(() => Filter(1))">*</span>
+            </th>
+            <th>
+                Location
+            </th>
+            <th>
+                Format
+            </th>
+            <th>
+                Size
+                <span @onclick="(() => Filter(2))">*</span>
+            </th>
+            <th>
+                Year
+                <span @onclick="(() => Filter(3))">*</span>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model == null)
+        {
+            <tr><td>Loading...</td></tr>
+        }
+        else
+        {
+            @foreach (Video item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Title
+                    </td>
+                    <td>
+                        @item.Location
+                    </td>
+                    <td>
+                        @if (item.Format != null)
+                        {
+                            @item.Format.Extension
+                        }
+                        else
+                        {
+                            <a>Not Set</a>
+                        }
+
+                    </td>
+                    <td>
+                        @item.Size
+                    </td>
+                    <td>
+                        @item.Year
+                    </td>
+                    <td>
+                        <a href="videos/edit" @onclick="(() => SetBook(item))">Edit</a> |
+                        <a href="videos/details" @onclick="(() => SetBook(item))">Details</a> |
+                        <a href="videos/delete" @onclick="(() => SetBook(item))">Delete</a>
+                    </td>
+                </tr>
+            }
+        } 
+    </tbody>
+</table>
+
+<script>
+    function showDiv(){
+        var selectDiv = document.getElementById("search-div");
+        selectDiv.style.display = "block";
+    }
+    function hideDiv() {
+        var selectDiv = document.getElementById("search-div");
+        selectDiv.style.display = "none";
+    }
+</script>
+
+@code {
+    ICollection<Video> Model;
+
+    SearchItem SearchModel;
+
+    bool ModelOrder = false;
+
+    Tag SelectedTag = null;
+    Author SelectedAuthor = null;
+    Genre SelectedGenre = null;
+
+    ICollection<Genre> Genres = new List<Genre>();
+    ICollection<Author> Authors = new List<Author>();
+    ICollection<Format> Formats = new List<Format>();
+    ICollection<Tag> Tags = new List<Tag>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        SearchModel = new();
+        await LoadVideos();
+    }
+
+    async Task LoadVideos()
+    {
+        Model = await videoManager.ReadAllAsync(true, false);
+    }
+
+    void SetBook(Video video)
+    {
+        videoContainer.SetValue(video);
+        videoManager.LoadNavigation(video);
+    }
+
+    async Task OnDelete(string id)
+    {
+        try
+        {
+            await videoManager.DeleteAsync(id);
+            await LoadVideos();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    void Filter(int Case)
+    {
+        switch(Case){
+            case 1:
+                if (ModelOrder)
+                {
+                    Model = Model.OrderBy(v => v.Title).ToList();
+                    ModelOrder = false;
+                }
+                else
+                {
+                    Model = Model.OrderByDescending(v => v.Title).ToList();
+                    ModelOrder = true;
+                }
+                break;
+            case 2:
+                if (ModelOrder)
+                {
+                    Model = Model.OrderBy(v => v.Size).ToList();
+                    ModelOrder = false;
+                }
+                else
+                {
+                    Model = Model.OrderByDescending(v => v.Size).ToList();
+                    ModelOrder = true;
+                }
+                break;
+            case 3:
+                if (ModelOrder)
+                {
+                    Model = Model.OrderBy(v => v.Year).ToList();
+                    ModelOrder = false;
+                }
+                else
+                {
+                    Model = Model.OrderByDescending(v => v.Year).ToList();
+                    ModelOrder = true;
+                }
+                break;
+        }
+
+    }
+
+    #region Search logic <---
+
+    async Task OnSearchActivation()
+    {
+        Genres = await genreManager.ReadAllAsync(false, false);
+        Authors = await authorManager.ReadAllAsync(false, false);
+        Formats = await formatManager.ReadAllAsync(false, false);
+        Tags = await tagManager.ReadAllAsync(false, false);
+
+        await JS.InvokeVoidAsync("showDiv");
+    }
+
+    void AddTag()
+    {
+        if (!SearchModel.SelectedTags.Contains(SelectedTag) && SelectedTag != null)
+            SearchModel.SelectedTags.Add(SelectedTag);
+        SelectedTag = null;
+    }
+
+    void AddAuthor()
+    {
+        if (!SearchModel.SelectedAuthors.Contains(SelectedAuthor) && SelectedAuthor != null)
+            SearchModel.SelectedAuthors.Add(SelectedAuthor);
+        SelectedAuthor = null;
+    }
+
+    void AddGenre()
+    {
+        if (!SearchModel.SelectedGenres.Contains(SelectedGenre) && SelectedGenre != null)
+            SearchModel.SelectedGenres.Add(SelectedGenre);
+        SelectedGenre = null;
+    }
+
+    private async Task<IEnumerable<Format>> SearchFormat(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Formats;
+
+        return Formats.Where(c => c.Extension.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<Tag>> SearchTags(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Tags;
+
+        return Tags.Where(c => c.Content.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<Author>> SearchAuthors(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Authors;
+
+        return Authors.Where(c => c.AuthorName.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<Genre>> SearchGenres(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Genres;
+
+        return Genres.Where(c => c.Content.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    async Task SearchVideo()
+    {
+        Model = await videoManager.ReadAllAsync(true, false, true);
+        switch (SearchModel.SelectedTextOption)
+        {
+            case SearchItem.SearchTextOption.Title:
+                Model = Model.Where(v => v.Title.Contains(SearchModel.SearchedString)).ToList();
+                break;
+            case SearchItem.SearchTextOption.Location:
+                Model = Model.Where(v => v.Location.Contains(SearchModel.SearchedString)).ToList();
+                break;
+            case SearchItem.SearchTextOption.Description:
+                Model = Model.Where(v => v.Description.Contains(SearchModel.SearchedString)).ToList();
+                break;
+            case SearchItem.SearchTextOption.Copyright:
+                Model = Model.Where(v => v.Copyright.Contains(SearchModel.SearchedString)).ToList();
+                break;
+            case SearchItem.SearchTextOption.Comment:
+                Model = Model.Where(v => v.Comment.Contains(SearchModel.SearchedString)).ToList();
+                break;
+        }
+
+        if(SearchModel.SelectedNumberOption == SearchItem.SearchNumberOption.Size)
+            switch (SearchModel.SelectedNumberComparatorOption)
+            {
+                case SearchItem.SearchNumberComparatorOption.Equal:
+                    Model = Model.Where(v => v.Size == SearchModel.SearchedNumber).ToList();
+                    break;
+                case SearchItem.SearchNumberComparatorOption.Greater:
+                    Model = Model.Where(v => v.Size > SearchModel.SearchedNumber).ToList();
+                    break;
+                case SearchItem.SearchNumberComparatorOption.Less:
+                    Model = Model.Where(v => v.Size < SearchModel.SearchedNumber).ToList();
+                    break;
+            }
+        else if (SearchModel.SelectedNumberOption == SearchItem.SearchNumberOption.Year)
+            switch (SearchModel.SelectedNumberComparatorOption)
+            {
+                case SearchItem.SearchNumberComparatorOption.Equal:
+                    Model = Model.Where(v => v.Year == SearchModel.SearchedNumber).ToList();
+                    break;
+                case SearchItem.SearchNumberComparatorOption.Greater:
+                    Model = Model.Where(v => v.Year > SearchModel.SearchedNumber).ToList();
+                    break;
+                case SearchItem.SearchNumberComparatorOption.Less:
+                    Model = Model.Where(v => v.Year < SearchModel.SearchedNumber).ToList();
+                    break;
+            }
+
+        if(SearchModel.SelectedFormat != null)
+        {
+            Model = Model.Where(v => v.Format == SearchModel.SelectedFormat).ToList();
+        }
+        if(SearchModel.SelectedGenres.Count() > 0)
+        {
+            Model = Model.Where(v => v.Genres.SetEquals(SearchModel.SelectedGenres)).ToList();
+        }
+        if (SearchModel.SelectedTags.Count() > 0)
+        {
+            Model = Model.Where(v => v.Tags.SetEquals(SearchModel.SelectedTags)).ToList();
+        }
+        if (SearchModel.SelectedAuthors.Count() > 0)
+        {
+            Model = Model.Where(v => v.Authors.SetEquals(SearchModel.SelectedAuthors)).ToList();
+        }
+
+        await JS.InvokeVoidAsync("hideDiv");
+    }
+
+    async Task ClearSearchModel()
+    {
+        SelectedAuthor = null;
+        SelectedGenre = null;
+        SelectedTag = null;
+        SearchModel.SelectedGenres.Clear();
+        SearchModel.SelectedTextOption = SearchItem.SearchTextOption.None;
+        SearchModel.SelectedNumberOption = SearchItem.SearchNumberOption.None;
+        SearchModel.SelectedAuthors.Clear();
+        SearchModel.SelectedFormat = null;
+        SearchModel.SelectedTags.Clear();
+    }
+
+    #endregion
+}

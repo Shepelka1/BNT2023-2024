@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BussinessLayer
 {
@@ -9,29 +10,49 @@ namespace BussinessLayer
     {
         [Key]
         public string VideoId { get; set; }
+
         [Required]
         public string Title { get; set; }
+
         [Required]
         public string Location { get; set; }
 
         [ForeignKey("FormatId")]
+        [AllowNull]
         public string FormatId { get; set; }
+
+        [AllowNull]
         public Format Format { get; set; }
 
-        public List<Genre> Genres { get; set; }
-        public double Size { get; set; }
+        [AllowNull]
+        public HashSet<Tag> Tags { get; set; }
+
+        [AllowNull]
+        public double? Size { get; set; }
+
+        [AllowNull]
         public string Description { get; set; }
-        public List<Tag> Tags { get; set; }
+
+        [AllowNull]
+        public HashSet<Genre> Genres { get; set; }
+
+        [AllowNull]
         public string Comment { get; set; }
-        public int Year { get; set; }
-        public List<Author> Authors { get; set; }
+
+        [AllowNull]
+        public int? Year { get; set; }
+
+        [AllowNull]
+        public HashSet<Author> Authors { get; set; }
+
+        [AllowNull]
         public string Copyright { get; set; }
         public Video()
         {
             VideoId = Guid.NewGuid().ToString();
-            Authors = new List<Author>();
-            Tags = new List<Tag>();
-            Genres = new List<Genre>();
+            Authors = new();
+            Tags = new();
+            Genres = new();
         }
         public Video(string videoId, string title, string location, Format format, double size, string description, string comment, int year, string copyright) : this()
         {

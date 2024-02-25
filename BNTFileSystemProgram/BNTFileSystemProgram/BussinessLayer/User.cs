@@ -17,9 +17,11 @@ namespace BusinessLayer
         public string FirstName { get; set; }
         [Required, DisplayName("Last Name")]
         public string LastName { get; set; }
-        
-
         [Required]
         public Role Role { get; set; }
+        public User() : base()
+        {
+                
+        }
     }
 }

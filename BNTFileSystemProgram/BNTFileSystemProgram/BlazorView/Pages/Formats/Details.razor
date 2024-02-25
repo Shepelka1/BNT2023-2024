@@ -1,0 +1,38 @@
+﻿@page "/formats/details/{Id}"
+@using BussinessLayer;
+@using ServiceLayer;
+@inject FormatManager formatManager;
+
+<h3>Details</h3>
+
+<div>
+    <h4>Format</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Name
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Extension
+        </dd>
+    </dl>
+</div>
+<div>
+    <a href="formats/edit/@Model.FormatId">Edit</a> |
+    <a href="formats">Back to List</a>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+
+    Format Model = new Format();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await formatManager.ReadAsync(Id, false, true);
+    }
+
+}

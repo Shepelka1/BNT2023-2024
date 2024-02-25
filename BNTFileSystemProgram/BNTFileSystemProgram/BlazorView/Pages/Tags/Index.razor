@@ -1,0 +1,73 @@
+﻿@page "/tags"
+@using BussinessLayer;
+@using ServiceLayer;
+@inject TagManager tagManager;
+@inject NavigationManager navigationManager;
+
+<h1>Index</h1>
+
+<p>
+    <a href="tags/create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model == null)
+        {
+            <tr><td>Loading...</td></tr>
+        }
+        else
+        {
+            @foreach (Tag tag in Model)
+            {
+                <tr>
+                    <td>
+                        @tag.Content
+                    </td>
+                    <td>
+                        <a href="tags/edit/@tag.TagId">Edit</a> |
+                        <a href="tags/details/@tag.TagId">Details</a> |
+                        <a href="tags/delete/@tag.TagId">Delete</a> |
+                        <a href="tags" @onclick="(() => OnFastDelete(tag.TagId))">Fast Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    ICollection<Tag> Model /* = new List<Tag>() */ ;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await tagManager.ReadAllAsync();
+        await base.OnInitializedAsync();
+    }
+
+    async Task OnFastDelete(string id)
+    {
+        try
+        {
+            await tagManager.DeleteAsync(id);
+
+            // I начин:
+            Model = await tagManager.ReadAllAsync();
+
+            // II начин:
+            //navigationManager.NavigateTo("tags", true);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+}

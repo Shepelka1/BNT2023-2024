@@ -22,8 +22,8 @@ public class Program
             builder.Services.AddScoped<FormatContext, FormatContext>();
             builder.Services.AddScoped<FormatManager, FormatManager>();
 
-            builder.Services.AddScoped<GenreContext, GenreContext>();
-            builder.Services.AddScoped<GenreManager, GenreManager>();
+            builder.Services.AddScoped<TagContext, TagContext>();
+            builder.Services.AddScoped<TagManager, TagManager>();
 
             builder.Services.AddScoped<TagContext, TagContext>();
             builder.Services.AddScoped<TagManager, TagManager>();

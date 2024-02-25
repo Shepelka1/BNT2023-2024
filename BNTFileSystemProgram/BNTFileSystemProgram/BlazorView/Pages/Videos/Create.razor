@@ -1,0 +1,255 @@
+﻿@page "/videos/create"
+@using BlazorView.Services;
+@using MudBlazor;
+@using BussinessLayer;
+@using ServiceLayer;
+@using MudBlazor.Services;
+@inject VideoManager videoManager;
+@inject AuthorManager authorManager;
+@inject GenreManager genreManager;
+@inject FormatManager formatManager;
+@inject TagManager tagManager;
+@inject StateContainer<Video> videoContainer;
+@inject NavigationManager navigationManager;
+
+<h1>Create</h1>
+
+<h4>Video</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <MudForm Model="Model">
+            <div class="form-group">
+                <MudTextField @bind-value="Model.Title" 
+                              T="string" class="form-control" 
+                              Label="Title" 
+                              Variant="Variant.Outlined" 
+                              For="@( () => Model.Title )" />
+            </div>
+            <div class="form-group">
+                <MudTextField @bind-value="Model.Location" 
+                              T="string" class="form-control" 
+                              Label="Location" 
+                              Variant="Variant.Outlined" 
+                              For="@( () => Model.Location )" />
+            </div>
+                <div class="form-group">
+                    <div class="col-md-5 col-sm-12">
+                        <MudAutocomplete T="Format" Label="Formats" @bind-Value="Model.Format" SearchFunc="@SearchFormat"
+                                         ResetValueOnEmptyText="true"
+                                         CoerceText="true" CoerceValue="false"
+                                         ToStringFunc="@(f => f==null?null : $"{f.Extension}")" 
+                                         Variant="Variant.Outlined" 
+                                         Immediate="true"/>
+                    </div>
+                </div>
+            <div class="form-group">
+                <div class="col-md-5 col-sm-12">
+                    <MudAutocomplete T="Genre" Label="Genres" @bind-Value="SelectedGenre" SearchFunc="@SearchGenres"
+                                     ResetValueOnEmptyText="true"
+                                     CoerceText="true" CoerceValue="false"
+                                     ToStringFunc="@(g => g==null?null : $"{g.Content}")" 
+                                     Variant="Variant.Outlined" 
+                                     Immediate="true" />
+                </div>
+                <div class="col-md-5 col-sm-12">
+                    <MudButton class="btn btn-primary" OnClick="@(() => AddGenre())">Add</MudButton>
+                </div>
+                @foreach (var item in SelectedGenres)
+                {
+                    <a>@item.Content</a>
+                    <a @onclick="@(() => SelectedGenres.Remove(item))"> ✖</a>
+                    <a>| </a>
+                }
+            </div>
+            <div class="form-group">
+                <div class="col-md-5 col-sm-12">
+                    <MudAutocomplete T="Author" Label="Authors" @bind-Value="SelectedAuthor" SearchFunc="@SearchAuthors"
+                                     ResetValueOnEmptyText="true"
+                                     CoerceText="true" CoerceValue="false"
+                                     ToStringFunc="@(a => a==null?null : $"{a.AuthorName}")" 
+                                     Variant="Variant.Outlined"
+                                     Immediate="true" />
+                </div>
+                <div class="col-md-5 col-sm-12">
+                    <MudButton class="btn btn-primary" OnClick="@(() => AddAuthor())">Add</MudButton>
+                </div>
+                @foreach (var item in SelectedAuthors)
+                {
+                    <a>@item.AuthorName</a>
+                    <a @onclick="@(() => SelectedAuthors.Remove(item))"> ✖</a>
+                    <a>| </a>
+                }
+            </div>
+            <div class="form-group">
+                <div class="col-md-5 col-sm-12">
+                    <MudAutocomplete T="Tag" Label="Tags" @bind-Value="SelectedTag" SearchFunc="@SearchTags"
+                                     ResetValueOnEmptyText="true"
+                                     CoerceText="true" CoerceValue="false"
+                                     ToStringFunc="@(t => t==null?null : $"{t.Content}")" 
+                                     Variant="Variant.Outlined" 
+                                     Immediate="true" />
+                </div>
+                <div class="col-md-5 col-sm-12">
+                    <MudButton class="btn btn-primary" OnClick="@(() => AddTag())">Add</MudButton>
+                </div>
+                @foreach (var item in SelectedTags)
+                {
+                    <a>@item.Content</a>
+                    <a @onclick="@(() => SelectedTags.Remove(item))"> ✖</a>
+                    <a>| </a>
+                }
+            </div>
+            <div class="form-group">
+                <MudTextField @bind-value="Model.Size" 
+                              T="double?" class="form-control" 
+                              Label="Size" 
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.End" 
+                              AdornmentText="GB" 
+                              For="@( () => Model.Size )" />
+            </div>
+            <div class="form-group">
+                <MudTextField @bind-value="Model.Description" 
+                              T="string" class="form-control" 
+                              Label="Description" 
+                              AutoGrow
+                              Variant="Variant.Outlined" 
+                               For="@( () => Model.Description )" />
+            </div>
+            <div class="form-group">
+                <MudTextField @bind-value="Model.Comment" 
+                              T="string" class="form-control" 
+                              Label="Comment"
+                              AutoGrow
+                              Variant="Variant.Outlined" 
+                               For="@( () => Model.Comment )" />
+            </div>
+            <div class="form-group">
+                <MudTextField @bind-value="Model.Year" 
+                              T="int?" class="form-control" 
+                              Label="Year"
+                              Placeholder=" "
+                              Variant="Variant.Outlined" 
+                               For="@( () => Model.Year )" />
+            </div>
+            <div class="form-group">
+                <MudTextField @bind-value="Model.Copyright" 
+                              T="string" class="form-control" 
+                              Label="Copyright" 
+                              AutoGrow
+                              Variant="Variant.Outlined" 
+                               For="@( () => Model.Copyright )" />
+            </div>
+            <div class="form-group">
+                 <MudButton Variant="Variant.Filled" 
+                            StartIcon="@Icons.Material.Filled.Save" 
+                            IconColor="Color.Primary" 
+                            Size="Size.Large"
+                            OnClick="CreateVideo">Save</MudButton>
+            </div>
+        </MudForm>
+    </div>
+</div>
+
+ <div class="form-group">
+     <MudButton Variant="Variant.Filled"
+                IconColor="Color.Secondary"
+                Size="Size.Large"
+                Href="videos">Back</MudButton>
+ </div>
+
+ @code {
+    Tag SelectedTag = null;
+    HashSet<Tag> SelectedTags = new();
+
+    Author SelectedAuthor = null;
+    HashSet<Author> SelectedAuthors = new();
+
+    Genre SelectedGenre = null;
+    HashSet<Genre> SelectedGenres = new();
+
+    Video Model = new();
+
+    ICollection<Tag> Tags = new List<Tag>();
+    ICollection<Author> Authors = new List<Author>();
+    ICollection<Format> Formats = new List<Format>();
+    ICollection<Genre> Genres = new List<Genre>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Genres = await genreManager.ReadAllAsync(false, false);
+        Authors = await authorManager.ReadAllAsync(false, false);
+        Formats = await formatManager.ReadAllAsync(false, false);
+        Tags = await tagManager.ReadAllAsync(false, false);
+
+        Model.Format = null;
+        Model.Genres = new ();
+        Model.Authors = new ();
+        Model.Tags = new ();
+    }
+
+    void AddTag()
+    {
+        if(!SelectedTags.Contains(SelectedTag) && SelectedTag != null)
+            SelectedTags.Add(SelectedTag);
+        SelectedTag = null;
+    }
+
+    void AddAuthor()
+    {
+        if (!SelectedAuthors.Contains(SelectedAuthor) && SelectedAuthor != null)
+            SelectedAuthors.Add(SelectedAuthor);
+        SelectedAuthor = null;
+    }
+
+    void AddGenre()
+    {
+        if (!SelectedGenres.Contains(SelectedGenre) && SelectedGenre != null)
+            SelectedGenres.Add(SelectedGenre);
+        SelectedGenre = null;
+    }
+
+    private async Task<IEnumerable<Format>> SearchFormat(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Formats;
+
+        return Formats.Where(c => c.Extension.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<Tag>> SearchTags(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Tags;
+
+        return Tags.Where(c => c.Content.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<Author>> SearchAuthors(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Authors;
+
+        return Authors.Where(c => c.AuthorName.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<Genre>> SearchGenres(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Genres;
+
+        return Genres.Where(c => c.Content.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task CreateVideo()
+    {
+        Model.Genres = SelectedGenres;
+        Model.Tags = SelectedTags;
+        Model.Authors = SelectedAuthors;
+        if (Model.Format != null)
+            Model.FormatId = Model.Format.FormatId;
+        await videoManager.CreateAsync(Model);
+        navigationManager.NavigateTo("videos", true);
+    }
+}

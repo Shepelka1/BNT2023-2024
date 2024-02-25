@@ -11,22 +11,22 @@ using ServiceLayer;
 
 namespace BNTFileSystemProgram.Controllers
 {
-    public class GenresController : Controller
+    public class TagsController : Controller
     {
-        private readonly GenreManager genreManager;
+        private readonly TagManager genreManager;
 
-        public GenresController(GenreManager genreManager)
+        public TagsController(TagManager genreManager)
         {
             this.genreManager = genreManager;
         }
 
-        // GET: Genres
+        // GET: Tags
         public async Task<IActionResult> Index()
         {
             return View(await genreManager.ReadAllAsync());
         }
 
-        // GET: Genres/Details/5
+        // GET: Tags/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -44,18 +44,18 @@ namespace BNTFileSystemProgram.Controllers
             return View(genre);
         }
 
-        // GET: Genres/Create
+        // GET: Tags/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Genres/Create
+        // POST: Tags/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GenreId,Content")] Genre genre)
+        public async Task<IActionResult> Create([Bind("TagId,Content")] Tag genre)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace BNTFileSystemProgram.Controllers
             return View(genre);
         }
 
-        // GET: Genres/Edit/5
+        // GET: Tags/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -73,19 +73,19 @@ namespace BNTFileSystemProgram.Controllers
                 return NotFound();
             }
 
-            Genre genre = await genreManager.ReadAsync(id);
+            Tag genre = await genreManager.ReadAsync(id);
             if (genre == null) { return NotFound(); }
             return View(genre);
         }
 
-        // POST: Genres/Edit/5
+        // POST: Tags/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("GenreId,Content")] Genre genre)
+        public async Task<IActionResult> Edit(string id, [Bind("TagId,Content")] Tag genre)
         {
-            if (id != genre.GenreId)
+            if (id != genre.TagId)
             {
                 return NotFound();
             }
@@ -98,7 +98,7 @@ namespace BNTFileSystemProgram.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await GenreExists(genre.GenreId))
+                    if (!await TagExists(genre.TagId))
                     {
                         return NotFound();
                     }
@@ -112,7 +112,7 @@ namespace BNTFileSystemProgram.Controllers
             return View();
         }
 
-        // GET: Genres/Delete/5
+        // GET: Tags/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -120,7 +120,7 @@ namespace BNTFileSystemProgram.Controllers
                 return NotFound();
             }
 
-            Genre genreFromDb = await genreManager.ReadAsync(id, false, true);
+            Tag genreFromDb = await genreManager.ReadAsync(id, false, true);
 
             if (genreFromDb == null)
             {
@@ -130,7 +130,7 @@ namespace BNTFileSystemProgram.Controllers
             return View(genreFromDb);
         }
 
-        // POST: Genres/Delete/5
+        // POST: Tags/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
@@ -139,7 +139,7 @@ namespace BNTFileSystemProgram.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> GenreExists(string id)
+        private async Task<bool> TagExists(string id)
         {
             return await genreManager.ReadAsync(id) is not null;
         }

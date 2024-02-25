@@ -1,0 +1,102 @@
+﻿@page "/videos/details"
+@using BlazorView.Services;
+@using BussinessLayer;
+@using ServiceLayer;
+@inject VideoManager videoManager;
+@inject StateContainer<Video> videoContainer;
+
+<h1>Details</h1>
+
+<div>
+    <h4>Video</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Title
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Title
+        </dd>
+        <dt class="col-sm-2">
+            Location
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Location
+        </dd>
+        <dt class="col-sm-2">
+            Format
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Format != null)
+            {
+                @Model.Format.Extension
+            }
+            else
+            {
+                <a>Not Set</a>
+            }
+        </dd>
+        <dt class="col-sm-2">
+            Authors
+        </dt>
+        <dd class="col-sm-10">
+            <p>@String.Join(", ", Model.Authors.Select(a => a.AuthorName))</p>
+        </dd>
+        <dt class="col-sm-2">
+            Tags
+        </dt>
+        <dd class="col-sm-10">
+            <p>@String.Join(", ", Model.Tags.Select(a => a.Content))</p>
+        </dd>
+        <dt class="col-sm-2">
+            Tags
+        </dt>
+        <dd class="col-sm-10">
+            <p>@String.Join(", ", Model.Tags.Select(a => a.Content))</p>
+        </dd>
+        <dt class="col-sm-2">
+            Size
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Size
+        </dd>
+        <dt class="col-sm-2">
+            Description
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Description
+        </dd>
+        <dt class="col-sm-2">
+            Comment
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Comment
+        </dd>
+        <dt class="col-sm-2">
+            Year
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Year
+        </dd>
+        <dt class="col-sm-2">
+            Copyright
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Copyright
+        </dd>
+    </dl>
+</div>
+<div>
+    <a href="videos/edit">Edit</a> |
+    <a href="videos">Back to List</a>
+</div>
+
+@code {
+    Video Model = new();
+    protected override Task OnInitializedAsync()
+    {
+        Model = videoContainer.Value;
+        return Task.CompletedTask;
+        //return Task.FromResult(5);
+    }
+}

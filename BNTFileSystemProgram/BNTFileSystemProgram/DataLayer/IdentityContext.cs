@@ -14,18 +14,18 @@ namespace DataLayer
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext dbContext;
 
         public IdentityContext(ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            _context = context;
+            dbContext = context;
             _userManager = userManager;
             _roleManager = roleManager;
         }
 
         public async Task SeedDataAsync(string adminUsername, string adminPass)
         {
-            var admins = _context.Users.Where(u => u.Role == Role.Admin).ToList();
+            var admins = dbContext.Users.Where(u => u.Role == Role.Admin).ToList();
             if (admins.Count == 0)
             {
                 await CreateAdminAccountAsync(adminUsername, adminPass);
@@ -36,15 +36,15 @@ namespace DataLayer
             await CreateUserAsync(username, password, "admin", "admin", Role.Admin);
         }
 
-        public async Task CreateUserAsync(string username, string password, string firstname, string lastname, Role role)
+        public async Task CreateUserAsync(string username, string password, string firstName, string lastName, Role role)
         {
             try
             {
                 var user = new User
                 {
                     UserName = username,
-                    FirstName = firstname,
-                    LastName = lastname,
+                    FirstName = firstName,
+                    LastName = lastName,
                     Role = role
                 };
 
@@ -92,7 +92,7 @@ namespace DataLayer
 
                 if (result.Succeeded)
                 {
-                    return await _context.Users.FindAsync(user.Id);
+                    return await dbContext.Users.FindAsync(user.Id);
                 }
 
                 return null;
@@ -103,11 +103,11 @@ namespace DataLayer
             }
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<List<User>> GetAllUsersAsync()
         {
             try
             {
-                return await _context.Users.ToListAsync();
+                return await dbContext.Users.ToListAsync();
             }
             catch (Exception ex)
             {

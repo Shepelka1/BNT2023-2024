@@ -29,7 +29,7 @@ namespace DataLayer
         {
             if (!optionsBuilder.IsConfigured)
             {
-
+                //optionsBuilder.EnableSensitiveDataLogging();
                 optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS; Database=TESTBNT;Trusted_Connection=True;");
             }
             base.OnConfiguring(optionsBuilder);
@@ -59,7 +59,5 @@ namespace DataLayer
         public DbSet<Genre> Genres { get; set; }
 
         public DbSet<User> Users { get; set; }
-
-        
     }
 }

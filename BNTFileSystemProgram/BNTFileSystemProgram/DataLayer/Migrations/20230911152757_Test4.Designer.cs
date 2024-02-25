@@ -67,18 +67,18 @@ namespace DataLayer.Migrations
                     b.ToTable("Formats");
                 });
 
-            modelBuilder.Entity("BussinessLayer.Genre", b =>
+            modelBuilder.Entity("BussinessLayer.Tag", b =>
                 {
-                    b.Property<string>("GenreId")
+                    b.Property<string>("TagId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("GenreId");
+                    b.HasKey("TagId");
 
-                    b.ToTable("Genres");
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("BussinessLayer.Tag", b =>
@@ -137,19 +137,19 @@ namespace DataLayer.Migrations
                     b.ToTable("Videos");
                 });
 
-            modelBuilder.Entity("GenreVideo", b =>
+            modelBuilder.Entity("TagVideo", b =>
                 {
-                    b.Property<string>("GenresGenreId")
+                    b.Property<string>("TagsTagId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("VideosVideoId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("GenresGenreId", "VideosVideoId");
+                    b.HasKey("TagsTagId", "VideosVideoId");
 
                     b.HasIndex("VideosVideoId");
 
-                    b.ToTable("GenreVideo");
+                    b.ToTable("TagVideo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -438,11 +438,11 @@ namespace DataLayer.Migrations
                     b.Navigation("Format");
                 });
 
-            modelBuilder.Entity("GenreVideo", b =>
+            modelBuilder.Entity("TagVideo", b =>
                 {
-                    b.HasOne("BussinessLayer.Genre", null)
+                    b.HasOne("BussinessLayer.Tag", null)
                         .WithMany()
-                        .HasForeignKey("GenresGenreId")
+                        .HasForeignKey("TagsTagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
