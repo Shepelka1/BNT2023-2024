@@ -1,0 +1,73 @@
+﻿@page "/authors"
+@using BussinessLayer;
+@using ServiceLayer;
+@inject AuthorManager authorManager;
+@inject NavigationManager navigationManager;
+
+<h1>Index</h1>
+
+<p>
+    <a href="authors/create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model == null)
+        {
+            <tr><td>Loading...</td></tr>
+        }
+        else
+        {
+            @foreach (Author author in Model)
+            {
+                <tr>
+                    <td>
+                        @author.AuthorName
+                    </td>
+                    <td>
+                        <a href="authors/edit/@author.AuthorId">Edit</a> |
+                        <a href="authors/details/@author.AuthorId">Details</a> |
+                        <a href="authors/delete/@author.AuthorId">Delete</a> |
+                        <a href="authors" @onclick="(() => OnFastDelete(author.AuthorId))">Fast Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    ICollection<Author> Model /* = new List<Author>() */ ;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await authorManager.ReadAllAsync();
+        await base.OnInitializedAsync();
+    }
+
+    async Task OnFastDelete(string id)
+    {
+        try
+        {
+            await authorManager.DeleteAsync(id);
+
+            // I начин:
+            Model = await authorManager.ReadAllAsync();
+
+            // II начин:
+            //navigationManager.NavigateTo("authors", true);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+}

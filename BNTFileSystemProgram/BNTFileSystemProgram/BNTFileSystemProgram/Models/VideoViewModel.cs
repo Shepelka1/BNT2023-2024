@@ -16,7 +16,7 @@ namespace BNTFileSystemProgram.Models
         [ForeignKey("FormatId")]
         public string FormatId { get; set; }
         public Format Format { get; set; }
-        public List<Genre> Genres { get; set; }
+        public List<Tag> Tags { get; set; }
         public double Size { get; set; }
         public string Description { get; set; }
         public List<Tag> Tags { get; set; }

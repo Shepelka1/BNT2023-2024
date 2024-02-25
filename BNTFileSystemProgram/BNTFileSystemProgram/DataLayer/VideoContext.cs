@@ -44,9 +44,9 @@ namespace DataLayer
                 {
                     query = query.Include(v => v.Format);
                     if (!forIndex)
-                        query = query.Include(v => v.Genres)
+                        query = query.Include(v => v.Tags)
                             .Include(v => v.Authors)
-                            .Include(v => v.Tags);
+                            .Include(v => v.Genres);
                 }
 
                 if (isReadOnly)
@@ -73,9 +73,9 @@ namespace DataLayer
                 {
                     query = query.Include(v => v.Format);
                     if (!forIndex)
-                        query = query.Include(v => v.Genres)
+                        query = query.Include(v => v.Tags)
                             .Include(v => v.Authors)
-                            .Include(v => v.Tags);
+                            .Include(v => v.Genres);
                 }
 
                 if (isReadOnly)
@@ -127,9 +127,9 @@ namespace DataLayer
         }
         public void LoadNavigation(Video item)
         {
-            dbContext.Entry(item).Collection(v => v.Genres).Load();
-            dbContext.Entry(item).Collection(v => v.Authors).Load();
             dbContext.Entry(item).Collection(v => v.Tags).Load();
+            dbContext.Entry(item).Collection(v => v.Authors).Load();
+            dbContext.Entry(item).Collection(v => v.Genres).Load();
         }
     }
 }

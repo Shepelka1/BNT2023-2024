@@ -1,4 +1,4 @@
-﻿@model BussinessLayer.Genre
+﻿@model BussinessLayer.Tag
 
 @{
     ViewData["Title"] = "Edit";
@@ -6,13 +6,13 @@
 
 <h1>Edit</h1>
 
-<h4>Genre</h4>
+<h4>Tag</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="GenreId" />
+            <input type="hidden" asp-for="TagId" />
             <div class="form-group">
                 <label asp-for="Content" class="control-label"></label>
                 <input asp-for="Content" class="form-control" />
@@ -26,6 +26,6 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to Genres</a>
+    <a asp-action="Index">Back to Tags</a>
 </div>
 

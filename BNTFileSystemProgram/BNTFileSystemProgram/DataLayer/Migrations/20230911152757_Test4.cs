@@ -77,15 +77,15 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Genres",
+                name: "Tags",
                 columns: table => new
                 {
-                    GenreId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TagId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Genres", x => x.GenreId);
+                    table.PrimaryKey("PK_Tags", x => x.TagId);
                 });
 
             migrationBuilder.CreateTable(
@@ -256,23 +256,23 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GenreVideo",
+                name: "TagVideo",
                 columns: table => new
                 {
-                    GenresGenreId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TagsTagId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     VideosVideoId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GenreVideo", x => new { x.GenresGenreId, x.VideosVideoId });
+                    table.PrimaryKey("PK_TagVideo", x => new { x.TagsTagId, x.VideosVideoId });
                     table.ForeignKey(
-                        name: "FK_GenreVideo_Genres_GenresGenreId",
-                        column: x => x.GenresGenreId,
-                        principalTable: "Genres",
-                        principalColumn: "GenreId",
+                        name: "FK_TagVideo_Tags_TagsTagId",
+                        column: x => x.TagsTagId,
+                        principalTable: "Tags",
+                        principalColumn: "TagId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GenreVideo_Videos_VideosVideoId",
+                        name: "FK_TagVideo_Videos_VideosVideoId",
                         column: x => x.VideosVideoId,
                         principalTable: "Videos",
                         principalColumn: "VideoId",
@@ -363,8 +363,8 @@ namespace DataLayer.Migrations
                 column: "VideosVideoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GenreVideo_VideosVideoId",
-                table: "GenreVideo",
+                name: "IX_TagVideo_VideosVideoId",
+                table: "TagVideo",
                 column: "VideosVideoId");
 
             migrationBuilder.CreateIndex(
@@ -399,7 +399,7 @@ namespace DataLayer.Migrations
                 name: "AuthorVideo");
 
             migrationBuilder.DropTable(
-                name: "GenreVideo");
+                name: "TagVideo");
 
             migrationBuilder.DropTable(
                 name: "TagVideo");
@@ -414,7 +414,7 @@ namespace DataLayer.Migrations
                 name: "Authors");
 
             migrationBuilder.DropTable(
-                name: "Genres");
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Tags");

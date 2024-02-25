@@ -29,10 +29,10 @@
                 <select asp-for="FormatId" class="form-control" asp-items="ViewBag.Format"></select>
             </div>
             <div class="form-group">
-                <label class="control-label">Genres</label>
+                <label class="control-label">Tags</label>
                 <br/>
-                @foreach(Genre item in ViewBag.Genres){
-                    <input class="viewCheckBox" name="Genres" type="checkbox" value="@item.GenreId"/> @item.Content
+                @foreach(Tag item in ViewBag.Tags){
+                    <input class="viewCheckBox" name="Tags" type="checkbox" value="@item.TagId"/> @item.Content
                 }
             </div>
             <div class="form-group">

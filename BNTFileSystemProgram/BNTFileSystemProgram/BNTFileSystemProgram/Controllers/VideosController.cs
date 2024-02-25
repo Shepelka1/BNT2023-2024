@@ -16,10 +16,10 @@ namespace BNTFileSystemProgram.Controllers
     {
         private readonly VideoManager videoManager;
         private readonly AuthorManager authorManager;
-        private readonly GenreManager genreManager;
+        private readonly TagManager genreManager;
         private readonly TagManager tagManager;
 
-        public VideosController(VideoManager videoManager, AuthorManager authorManager, GenreManager genreManager, TagManager tagManager)
+        public VideosController(VideoManager videoManager, AuthorManager authorManager, TagManager genreManager, TagManager tagManager)
         {
             this.videoManager = videoManager;
             this.authorManager = authorManager;
@@ -171,7 +171,7 @@ namespace BNTFileSystemProgram.Controllers
         public void LoadNavigationalProperties()
         {
             ViewData["Format"] = new SelectList(ContextHelper.GetDbContext().Formats, "FormatId", "Extension") ;
-            ViewData["Genres"] = ContextHelper.GetDbContext().Genres.ToList();
+            ViewData["Tags"] = ContextHelper.GetDbContext().Tags.ToList();
             ViewData["Authors"] = ContextHelper.GetDbContext().Authors.ToList();
             ViewData["Tags"] = ContextHelper.GetDbContext().Tags.ToList();
         }
@@ -179,7 +179,7 @@ namespace BNTFileSystemProgram.Controllers
         public async Task<Video> SetVideoPropertiesAsync(IFormCollection formCollection)
         {
             Author authorFromDb;
-            Genre genreFromDb;
+            Tag genreFromDb;
             Tag tagFromDb;
             Video video = new();
 
@@ -192,12 +192,12 @@ namespace BNTFileSystemProgram.Controllers
                 }
             }
 
-            foreach (string item in formCollection["Genres"])
+            foreach (string item in formCollection["Tags"])
             {
                 genreFromDb = await genreManager.ReadAsync(item);
                 if (genreFromDb != null)
                 {
-                    video.Genres.Add(genreFromDb);
+                    video.Tags.Add(genreFromDb);
                 }
             }
 

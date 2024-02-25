@@ -1,0 +1,73 @@
+﻿@page "/formats"
+@using BussinessLayer;
+@using ServiceLayer;
+@inject FormatManager formatManager;
+@inject NavigationManager navigationManager;
+
+<h1>Index</h1>
+
+<p>
+    <a href="formats/create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model == null)
+        {
+            <tr><td>Loading...</td></tr>
+        }
+        else
+        {
+            @foreach (Format format in Model)
+            {
+                <tr>
+                    <td>
+                        @format.Extension
+                    </td>
+                    <td>
+                        <a href="formats/edit/@format.FormatId">Edit</a> |
+                        <a href="formats/details/@format.FormatId">Details</a> |
+                        <a href="formats/delete/@format.FormatId">Delete</a> |
+                        <a href="formats" @onclick="(() => OnFastDelete(format.FormatId))">Fast Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    ICollection<Format> Model /* = new List<Format>() */ ;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await formatManager.ReadAllAsync();
+        await base.OnInitializedAsync();
+    }
+
+    async Task OnFastDelete(string id)
+    {
+        try
+        {
+            await formatManager.DeleteAsync(id);
+
+            // I начин:
+            Model = await formatManager.ReadAllAsync();
+
+            // II начин:
+            //navigationManager.NavigateTo("formats", true);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+}

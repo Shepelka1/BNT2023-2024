@@ -35,14 +35,14 @@ namespace BlazorView
             services.AddScoped<VideoManager, VideoManager>();
             services.AddScoped<VideoContext, VideoContext>();
 
-            services.AddScoped<GenreManager, GenreManager>();
-            services.AddScoped<GenreContext, GenreContext>();
+            services.AddScoped<TagManager, TagManager>();
+            services.AddScoped<TagContext, TagContext>();
 
             services.AddScoped<AuthorManager, AuthorManager>();
             services.AddScoped<AuthorContext, AuthorContext>();
 
-            services.AddScoped<TagManager, TagManager>();
-            services.AddScoped<TagContext, TagContext>();
+            services.AddScoped<GenreManager, GenreManager>();
+            services.AddScoped<GenreContext, GenreContext>();
 
             services.AddScoped<FormatManager, FormatManager>();
             services.AddScoped<FormatContext, FormatContext>();

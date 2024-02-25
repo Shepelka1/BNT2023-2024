@@ -25,7 +25,7 @@ namespace BussinessLayer
         public Format Format { get; set; }
 
         [AllowNull]
-        public List<Genre> Genres { get; set; }
+        public HashSet<Tag> Tags { get; set; }
 
         [AllowNull]
         public double? Size { get; set; }
@@ -34,7 +34,7 @@ namespace BussinessLayer
         public string Description { get; set; }
 
         [AllowNull]
-        public List<Tag> Tags { get; set; }
+        public HashSet<Genre> Genres { get; set; }
 
         [AllowNull]
         public string Comment { get; set; }
@@ -43,16 +43,16 @@ namespace BussinessLayer
         public int? Year { get; set; }
 
         [AllowNull]
-        public List<Author> Authors { get; set; }
+        public HashSet<Author> Authors { get; set; }
 
         [AllowNull]
         public string Copyright { get; set; }
         public Video()
         {
             VideoId = Guid.NewGuid().ToString();
-            Authors = new List<Author>();
-            Tags = new List<Tag>();
-            Genres = new List<Genre>();
+            Authors = new();
+            Tags = new();
+            Genres = new();
         }
         public Video(string videoId, string title, string location, Format format, double size, string description, string comment, int year, string copyright) : this()
         {

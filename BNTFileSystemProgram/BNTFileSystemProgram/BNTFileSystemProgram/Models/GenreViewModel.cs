@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BNTFileSystemProgram.Models
 {
-    public class GenreViewModel
+    public class TagViewModel
     {
-        public string GenreId { get; set; }
+        public string TagId { get; set; }
         [Required]
         public string Content { get; set; }
         public List<Video> Videos { get; set; }

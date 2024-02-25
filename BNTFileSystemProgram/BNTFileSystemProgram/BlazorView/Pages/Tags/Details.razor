@@ -1,12 +1,12 @@
-﻿@page "/genres/details/{Id}"
+﻿@page "/tags/details/{Id}"
 @using BussinessLayer;
 @using ServiceLayer;
-@inject GenreManager genreManager;
+@inject TagManager tagManager;
 
 <h3>Details</h3>
 
 <div>
-    <h4>Genre</h4>
+    <h4>Tag</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -18,8 +18,8 @@
     </dl>
 </div>
 <div>
-    <a href="genres/edit/@Model.GenreId">Edit</a> |
-    <a href="genres">Back to List</a>
+    <a href="tags/edit/@Model.TagId">Edit</a> |
+    <a href="tags">Back to List</a>
 </div>
 
 
@@ -28,11 +28,11 @@
     [Parameter]
     public string Id { get; set; }
 
-    Genre Model = new Genre();
+    Tag Model = new Tag();
 
     protected override async Task OnInitializedAsync()
     {
-        Model = await genreManager.ReadAsync(Id, false, true);
+        Model = await tagManager.ReadAsync(Id, false, true);
     }
 
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231227083810_Mig2024")]
-    partial class Mig2024
+    [Migration("20240224182640_ToSetTransfer")]
+    partial class ToSetTransfer
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -177,22 +177,22 @@ namespace DataLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5c08d9f0-0272-4eac-a3a2-3f32a132be93",
-                            ConcurrencyStamp = "3514909d-3e71-4969-aa9e-604d78d9b713",
+                            Id = "1765210a-4b4c-469a-96dc-5a8048d03891",
+                            ConcurrencyStamp = "abbe7966-f398-4b9b-9814-8a214d78d298",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "a95e28f7-9844-46da-b92a-799268a36f7e",
-                            ConcurrencyStamp = "86451d1e-da0f-428d-819d-e991ae8b263a",
+                            Id = "71e25bc1-e74f-42fa-9ce6-309f4e1f298d",
+                            ConcurrencyStamp = "2e38c9a3-4a18-4f11-a42a-70ed93ec6091",
                             Name = "Editor",
                             NormalizedName = "EDITOR"
                         },
                         new
                         {
-                            Id = "a60b2eba-10d8-4873-8638-b00c2a8e44bf",
-                            ConcurrencyStamp = "b2a109a9-7961-4a13-9b61-be93e94fbb6a",
+                            Id = "a8e39dab-407d-4b1c-913a-e27981546e9d",
+                            ConcurrencyStamp = "0088d821-2106-4d61-a37c-50966fe6267c",
                             Name = "User",
                             NormalizedName = "USER"
                         });

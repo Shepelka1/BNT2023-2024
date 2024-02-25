@@ -167,21 +167,21 @@
  </div>
 
  @code {
-    Genre SelectedGenre = null;
-    List<Genre> SelectedGenres = new();
+    Tag SelectedTag = null;
+    HashSet<Tag> SelectedTags = new();
 
     Author SelectedAuthor = null;
-    List<Author> SelectedAuthors = new();
+    HashSet<Author> SelectedAuthors = new();
 
-    Tag SelectedTag = null;
-    List<Tag> SelectedTags = new();
+    Genre SelectedGenre = null;
+    HashSet<Genre> SelectedGenres = new();
 
     Video Model = new();
 
-    ICollection<Genre> Genres = new List<Genre>();
+    ICollection<Tag> Tags = new List<Tag>();
     ICollection<Author> Authors = new List<Author>();
     ICollection<Format> Formats = new List<Format>();
-    ICollection<Tag> Tags = new List<Tag>();
+    ICollection<Genre> Genres = new List<Genre>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -193,16 +193,16 @@
 
 
         Model = videoContainer.Value;
-        SelectedGenres = videoContainer.Value.Genres;
-        SelectedAuthors = videoContainer.Value.Authors;
         SelectedTags = videoContainer.Value.Tags;
+        SelectedAuthors = videoContainer.Value.Authors;
+        SelectedGenres = videoContainer.Value.Genres;
     }
 
-    void AddGenre()
+    void AddTag()
     {
-        if (!SelectedGenres.Contains(SelectedGenre) && SelectedGenre != null)
-            SelectedGenres.Add(SelectedGenre);
-        SelectedGenre = null;
+        if (!SelectedTags.Contains(SelectedTag) && SelectedTag != null)
+            SelectedTags.Add(SelectedTag);
+        SelectedTag = null;
     }
 
     void AddAuthor()
@@ -212,11 +212,11 @@
         SelectedAuthor = null;
     }
 
-    void AddTag()
+    void AddGenre()
     {
-        if (!SelectedTags.Contains(SelectedTag) && SelectedTag != null)
-            SelectedTags.Add(SelectedTag);
-        SelectedTag = null;
+        if (!SelectedGenres.Contains(SelectedGenre) && SelectedGenre != null)
+            SelectedGenres.Add(SelectedGenre);
+        SelectedGenre = null;
     }
 
     private async Task<IEnumerable<Format>> SearchFormat(string value)
@@ -227,12 +227,12 @@
         return Formats.Where(c => c.Extension.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    private async Task<IEnumerable<Genre>> SearchGenres(string value)
+    private async Task<IEnumerable<Tag>> SearchTags(string value)
     {
         if (string.IsNullOrEmpty(value))
-            return Genres;
+            return Tags;
 
-        return Genres.Where(c => c.Content.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+        return Tags.Where(c => c.Content.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     private async Task<IEnumerable<Author>> SearchAuthors(string value)
@@ -243,18 +243,18 @@
         return Authors.Where(c => c.AuthorName.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    private async Task<IEnumerable<Tag>> SearchTags(string value)
+    private async Task<IEnumerable<Genre>> SearchGenres(string value)
     {
         if (string.IsNullOrEmpty(value))
-            return Tags;
+            return Genres;
 
-        return Tags.Where(c => c.Content.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
+        return Genres.Where(c => c.Content.StartsWith(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     private async Task EditVideo()
     {
-        Model.Tags = SelectedTags;
         Model.Genres = SelectedGenres;
+        Model.Tags = SelectedTags;
         Model.Authors = SelectedAuthors;
         if(Model.Format != null)
             Model.FormatId = Model.Format.FormatId;

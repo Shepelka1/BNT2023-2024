@@ -1,0 +1,56 @@
+﻿@page "/tags/create"
+@using BussinessLayer;
+@using ServiceLayer;
+@inject TagManager tagManager;
+@inject NavigationManager navigationManager;
+@inject ErrorModel errorModel;
+
+<h3>Create</h3>
+
+<h4>Tag</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm Model="@Model" OnValidSubmit="OnCreated">
+            <DataAnnotationsValidator/>
+            <div class="form-group">
+                <label class="control-label">Name</label>
+                <InputText @bind-Value="Model.Content" class="form-control" autofocus />
+                <ValidationMessage For=@( () => Model.Content)/>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+
+            <label id="error" class="text-danger">@errorModel.Description</label>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="tags">Back to List</a>
+</div>
+
+@code {
+    // Instead of document.getElementById(...), write @ref=nameTxtBox
+    //InputText nameTxtBox;
+
+    Tag Model = new Tag();
+
+    async Task OnCreated()
+    {
+        try
+        {
+            await tagManager.CreateAsync(Model);
+            navigationManager.NavigateTo("tags");
+        }
+        catch (Exception ex)
+        {
+            errorModel.Code = "DB";
+            errorModel.Description = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+        }
+
+    }
+
+
+}
